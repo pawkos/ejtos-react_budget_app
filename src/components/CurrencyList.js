@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const CurrencyList = () => {
     const { dispatch, currency } = useContext(AppContext);
+    const [isOpen, setIsOpen] = useState(false);
     let currencies = [{
         'name': '$ Dollar',
         'value': '$'
@@ -29,16 +30,17 @@ const CurrencyList = () => {
     };
 
     return (
-        <div className='alert alert-success'>
-            <label>
-                Currency (
-                <select className="custom-select" formatOptionLabel={option => `${option.name} - ${option.value}`} id="inputGroupSelect01" value={currency} onChange={(event) => setCurrency(event.target.value)}>
+        <div className="alert alert-success" style={{ padding: '10px 20px'}}>
+            <button className="btn btn-secondary dropdown-toggle" type="button" onClick={() => setIsOpen(!isOpen)} id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Currency ({currencies.find(item => item.value === currency).name})
+            </button>
+            {isOpen && (
+                <div className="dropdown-menu" style={{'display': 'block'}} aria-labelledby="dropdownMenuButton">
                     {currencies.map((curr) => (
-                        <option value={curr.value}>{curr.name}</option>
+                        <a className="dropdown-item" key={curr.value} onClick={() => setCurrency(curr.value)}>{curr.name}</a>
                     ))}
-                </select>
-                )
-            </label>
+                </div>
+            )}
         </div>
     );
 };

@@ -3,9 +3,9 @@ import React, { createContext, useReducer } from 'react';
 // 5. The reducer - this is used to update the state, based on the action
 export const AppReducer = (state, action) => {
     let budget = 0;
+    let total_budget = 0;
     switch (action.type) {
         case 'ADD_EXPENSE':
-            let total_budget = 0;
             total_budget = state.expenses.reduce(
                 (previousExp, currentExp) => {
                     return previousExp + currentExp.cost
@@ -25,7 +25,8 @@ export const AppReducer = (state, action) => {
                     ...state,
                 };
             } else {
-                alert("Cannot increase the allocation! Out of funds");
+                //alert("Cannot increase the allocation! Out of funds");
+                alert("The value cannot exceed remaining funds {state.currency} {total_budget - state.budget}");
                 return {
                     ...state
                 }
@@ -58,12 +59,24 @@ export const AppReducer = (state, action) => {
                 budget
             };
         case 'SET_BUDGET':
+            total_budget = state.expenses.reduce(
+                (previousExp, currentExp) => {
+                    return previousExp + currentExp.cost
+                },0
+            );
             action.type = "DONE";
-            state.budget = action.payload;
-
-            return {
-                ...state,
-            };
+            if(total_budget <= action.payload) {
+                state.budget = action.payload;
+                return {
+                    ...state,
+                };
+            }
+            else {
+                alert("you cannot reduce the budget value lower than the spending");
+                return {
+                    ...state,
+                };
+            }
         case 'CHG_CURRENCY':
             action.type = "DONE";
             state.currency = action.payload;
